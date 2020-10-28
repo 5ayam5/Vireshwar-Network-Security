@@ -1,0 +1,84 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Vireshwar - Network Security}
+\author{Sayam Sethi}
+\date{October 2020}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{textcomp}
+\usepackage{dirtytalk}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This report is on -
+\begin{enumerate}
+    \item A brief history of Bluetooth\texttrademark{}
+    \item Analysis of previously found attacks on Bluetooth\texttrademark{} technology and how they are related to concepts of
+    \begin{enumerate}
+        \item confidentiality,
+        \item integrity, and
+        \item availability.
+    \end{enumerate}
+    \item Security methods integrated in Bluetooth\texttrademark{} to prevent such attacks again in the future.
+\end{enumerate}
+
+%\begin{figure}[h!]
+%\centering
+%\includegraphics[scale=1.7]{universe}
+%\caption{The Universe}
+%\label{fig:universe}
+%\end{figure}
+
+\section{History of Bluetooth\texttrademark{}}
+
+Nils Rydbeck, the then CTO at Ericsson Mobile in Lund, Sweden initiated the creation of a short range communication technology. This was inspired by the inventions of Johann Ullman.\cite{wiki}\par
+In 1997, Adalio Sanchez, then head of IBM R\&D, contacted Nils Rydbeck for a joint project on unifying a mobile phone with a ThinkPad notebook. However, the idea was dropped and the two companies instead, came on an agreement to enable communication between a ThinkPad notebook and an Ericsson phone using the short-link technology. Adalio Sanchez and Nils Rydbeck decided to make this new technology open to the industry as a standard paving the way for extensive market access. This was prompted by the fact that both companies were not the share leaders in their respective markets. In May 1998, the Bluetooth\texttrademark{} SIG was launched with IBM and Ericsson as the founding signatories and a total of five members: Ericsson, Intel, Nokia, Toshiba and IBM.\cite{wiki}
+
+\subsection{Etymology}
+In 1997, Jim Kardach who happened to be reading The Long Ships (by Frans G. Bengtsson’s) about Vikings and the 10\textsuperscript{th} century Danish king Harald Bluetooth, suggested the name "Bluetooth". It was the noble thought of Harald Bluetooth\texttrademark{} who united the warring Danish tribes into a single clan, signifying the technology's aim to unify communication between different devices. The Bluetooth\texttrademark{} logo is a bind rune merging the Younger Futhark runes, Hagall and Bjarkan.\cite{wiki}
+
+
+\section{Famous Attacks on Bluetooth\texttrademark{} and their Solutions}
+
+\subsection{KNOB Attack}
+KNOB Attack stands for \say{Key Negotiation of Bluetooth\texttrademark{} Attack}. The vulnerability is enlisted in CVE-2019-9506.\cite{knob}
+\subsubsection{Overview}
+This attack is due to a vulnerability in the encryption key length negotiation process in Bluetooth\texttrademark{} BR/EDR Core v5.1 and earlier. The vulnerability permits an unauthorised, eavesdropping attacker to inject packets. This leads to complete access to the communication or even heightening of privileges. In this attack, the attacker forces the victim devices (can be two or more) to accept the encryption key as forced by the attacker by interrupting the communication between the devices. The key can be reduced to a size of even one byte which renders the encryption useless giving full access of the communications to the attacker.\cite{knobcve}
+\subsubsection{Description}
+To establish an encrypted connection, two Bluetooth\texttrademark{} devices must pair with each other and establish a link key that is used to generate the encryption key.\par
+Consider two devices trying to connect: Y and Z. Assume Y is the slave and Z the master. Once the link key has been authenticated, Y communicates the proposed size of the encryption key to Z, say 16 (the range of N is between 1 to 16 bytes). Now, Z has to either accept, reject or abort this negotiation. Alternatively, Z can also instead suggest using a smaller value due to technical constraints with the interface at Z. This smaller value can be accepted by Y after which Y can then further request to activate link-layer encryption with Z, which has to be then again accepted by Z for completion on the communication interface.\par
+X, who is an eavesdropper and attacker, can enforce using a smaller value of N by intercepting the communication that happens between the two devices. X can alter Y's proposal and send a proposal of 1 byte which Z will accept for successful communication since this is the least possible size of the encryption key. Now, Y will perceive the modified response as a result of restrictions on Z's interface which Y will accept. Thus, the encryption will be activated by Y and Z without realizing that N has been altered by a third-party. All communication can then be easily be decrypted since it requires only two attempts which is brute-forceable.\cite{knobcve}
+\subsubsection{Resolution}
+The KNOB attack is possible due to flaws in the Bluetooth\texttrademark{} specification. As such, any standard-compliant Bluetooth\texttrademark{} device can be expected to be vulnerable. The fix has been implemented on vendor-to-vendor basis and depends on whether they have actually fixed it or not. However, most devices updated after late 2018 are more likely to be secure.\cite{knob}
+
+\subsection{BIAS}
+BIAS stands for \say{Bluetooth\texttrademark{} Impersonation AttackS}. This attack has been discovered by Daniele Antonioli, Nils Ole Tippenhauer and Kasper Rasmussen who are the same people to have discovered the previous mentioned attack.\cite{bias}
+\subsubsection{Introduction}
+This attack is a result of flaws in the specification of the Bluetooth\texttrademark{} standard. This is an example of an impersonation attack which is possible without acquiring the long term encryption key used by the master and slave devices.\cite{bias}
+\subsubsection{Description}
+This impersonation attack begins at the time of the initial establishment of the secure connection between Y and Z (Y and Z already have a shared long term key and Z is attempting to establish communication with Y using the same key).\par
+The attack by X is possible by snooping on the unencrypted information communicated between Y and Z during the initiation of the secure connection. X is in possession of publicly available information of Y and Z (Bluetooth\texttrademark{} names, Bluetooth\texttrademark{} addresses, protocol version numbers, and capabilities). Additionally, X is also capable of jamming the communication and manipulating the information being transmitted. This attack is carried out by a direct breach of the secure connection standard claims.\cite{bias}
+\subsubsection{Resolution}
+Similar to the previous flaw, this is also due to flaws in the Bluetooth\texttrademark{} specifications. The fix has been implemented on vendor-to-vendor basis and depends on whether they have actually fixed it or not. However, most devices updated after December 2019 are more likely to be secure.
+
+\section{Implications}
+
+\subsection{Confidentiality}
+Such attacks are a direct violation of confidentiality and user privacy since all the traffic between the devices during the session can be decrypted by the attacker.
+
+\subsection{Integrity}
+They are a huge blow to the integrity of the Bluetooth\texttrademark{} technology and show the potential of a technology that is in development since close to two decades is prone to such varied attacks.
+
+\subsection{Accessibility}
+Although Bluetooth\texttrademark{} is widely accessible, such vulnerabilities lead to a huge doubt about the validity and utility of such tools by the general public for the greater good. This calls for serious insight into stringent security measures which are bound to improve the morality of technology widely accessible.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
